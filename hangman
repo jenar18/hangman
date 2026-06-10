@@ -1,0 +1,106 @@
+import random
+import tkinter as tk
+
+
+wordid = [
+    "koer", "kass", "raamat", "arvuti", "maja",
+    "kool", "linn", "auto", "rong", "laev",
+    "meri", "laud", "tool", "voodi", "leib",
+    "piim", "kohv", "kala", "liha", "talv",
+    "kevad", "suvi", "vihm", "lumi", "tuul",
+    "pilv", "tants", "aken", "klaas", "nuga",
+    "kahvel", "lusikas", "taldrik", "pann", "pott",
+    "tuli", "vesi", "sool", "juust", "muna",
+    "kana", "siga", "lehm", "hobune", "lammas",
+    "karu", "rebane", "hunt", "orav", "siil",
+    "konn", "lind", "kotkas", "vares", "part",
+    "nina", "silm", "kael", "selg", "jalg",
+    "juuksed", "hammas", "keel", "varvas", "veri",
+    "nahk", "raha", "pank", "pood", "turg",
+    "kirik", "park", "mets", "puu", "juur",
+    "seeme", "rohi", "nisu", "kaer", "oder",
+    "hernes", "kurk", "sibul", "ploom", "pirn",
+    "kirss", "maasikas", "haamer", "nael", "kruvi",
+    "pliiats", "paber", "vihik", "pinal", "tahvel",
+    "klass", "kodu", "tuba", "lamp", "peegel",
+]
+
+MAX_VIGU = 6  
+
+
+window = tk.Tk()
+window.title("Hangman") 
+
+# laeb 7 pilti ja index = vigade arv
+pildid = [tk.PhotoImage( file=f"hangman{i}.gif")
+          for i in range(MAX_VIGU + 1)]
+
+pilt = tk.Label(window, image=pildid[0])
+pilt.pack(padx=40, pady=40)
+
+
+def uuenda_pilt(vigu):
+    pilt.config(image=pildid[vigu])
+    window.update()   
+
+
+ 
+def MR_word():
+    word = random.choice(wordid)
+    return word.upper()
+
+
+def mangi(word):
+    word_completion = "_" * len(word)
+    arvasid_ara = False
+    arvatud_letterid = []
+    vigu = 0                     
+
+    print("Mangime Hangmani!")
+    uuenda_pilt(vigu)            
+    print(" ".join(word_completion))
+    print("\n")
+
+    while not arvasid_ara and vigu < MAX_VIGU:
+        arva = input("Paku tahti: ").upper()
+
+        if len(arva) == 1 and arva.isalpha():
+            if arva in arvatud_letterid:
+                print("Sa juba pakkusid seda tahte.")
+            elif arva not in word:
+                print("Vale!")
+                vigu += 1
+                arvatud_letterid.append(arva)
+                uuenda_pilt(vigu)  
+            else:
+                print("Good job!")
+                arvatud_letterid.append(arva)
+                word_as_list = list(word_completion)
+                indices = [i for i, taht in enumerate(word) if taht == arva] #
+                for index in indices:
+                    word_as_list[index] = arva
+                word_completion = "".join(word_as_list)
+                if "_" not in word_completion:
+                    arvasid_ara = True
+        else:
+            print("See pole sobiv pakkumine.")
+
+        print(" ".join(word_completion))
+        print("\n")
+
+    if arvasid_ara:
+        print(f"Good job, Sõna oli '{word}'.")
+    else:
+        print(f"Kaotasid. Sõna oli '{word}'.")
+
+
+def brain():
+    word = MR_word()
+    mangi(word)
+    while input("Proovi uuesti? (Y/N): ").upper() == "Y":
+        word = MR_word()
+        mangi(word)
+    window.mainloop()   # hoiab akna lahti, kuni ise selle sulged
+
+
+brain()
